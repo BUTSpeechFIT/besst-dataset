@@ -6,7 +6,7 @@ from datasets import load_dataset
 # Define paths
 ROOT_DIR = os.path.dirname(__file__)
 METADATA_DIR = os.path.join(ROOT_DIR, "metadata/lists")
-EXPECTED_VERSIONS = ["cognitive_load", "physical_load"]
+EXPECTED_VERSIONS = ["cognitive-load", "physical-load"]
 EXPECTED_SUBSETS = ["audio", "audio-video", "audio-video-bio", "audio-video-ecg"]
 SPLIT_VARIANTS = ["a", "b", "c", "d", "e"]
 SPLITS = ["train", "test", "validation"]
@@ -94,7 +94,7 @@ def test_dataset_loading(data_dir):
     try:
         dataset = load_dataset(
             "dataset/besst.py",
-            name="cognitive_load_audio_a",
+            name="cognitive-load_audio_a",
             data_dir=data_dir,
             cache_dir="./cache",
             metadata_dir=os.path.abspath("dataset/metadata"),

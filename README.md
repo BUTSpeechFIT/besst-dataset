@@ -64,10 +64,10 @@ Load the dataset using Hugging Face's datasets library:
 
 ```python
 from datasets import load_dataset
-# Load cognitive_load dataset, audio-video subset, split variant 'a'
+# Load cognitive-load dataset, audio-video subset, split variant 'a'
 dataset = load_dataset(
     "besst_dataset",
-    name="cognitive_load_audio-video_a",
+    name="cognitive-load_audio-video_a",
     data_dir="/path/to/data",
 )
 

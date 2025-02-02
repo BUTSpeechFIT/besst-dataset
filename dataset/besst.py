@@ -1,10 +1,9 @@
 import os
 import shutil
-
-import math
-import numpy as np
 from argparse import ArgumentParser, Namespace
+
 import datasets
+import numpy as np
 
 load2label = {"1": "low", "2": "medium", "3": "high"}
 
@@ -18,7 +17,7 @@ class BESSTDatasetConfig(datasets.BuilderConfig):
     def __init__(self, target_type, subset, split_variant, **kwargs):
         """
         Args:
-            target_type (str): The target type ('cognitive_load' or 'physical_load').
+            target_type (str): The target type ('cognitive-load' or 'physical-load').
             subset (str): The subset ('audio', 'audio-video', etc.).
             split_variant (str): The jackknifing split variant ('a', 'b', 'c', 'd', 'e').
             **kwargs: Additional keyword arguments passed to BuilderConfig.
@@ -38,9 +37,9 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
             subset=subset,
             split_variant=split,
             description=f"{target_type} dataset with {subset} modalities and split variant {split}.",
-            version=datasets.Version("1.0.0"),
+            version=datasets.Version("0.5.0"),
         )
-        for target_type in ["cognitive_load", "physical_load"]
+        for target_type in ["cognitive-load", "physical-load"]
         for subset in ["audio", "audio-video", "audio-video-bio", "audio-video-ecg"]
         for split in ["a", "b", "c", "d", "e"]
     ]
