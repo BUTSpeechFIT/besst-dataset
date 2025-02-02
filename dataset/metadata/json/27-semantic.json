@@ -1,0 +1,402 @@
+[
+  {
+    "pid": 27,
+    "sid": 0,
+    "start": 0,
+    "end": 215990,
+    "phase": "Instructions",
+    "phase_name": "Instructions",
+    "subjective_load": NaN,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 1,
+    "start": 220990,
+    "end": 363650,
+    "phase": "PSS14",
+    "phase_name": "PSS14",
+    "subjective_load": NaN,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 2,
+    "start": 368650,
+    "end": 548680,
+    "phase": "Relax-0",
+    "phase_name": "Relax",
+    "subjective_load": NaN,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 3,
+    "start": 553680,
+    "end": 667220,
+    "phase": "STAI-Y2-0",
+    "phase_name": "STAI-Y2",
+    "subjective_load": NaN,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 4,
+    "start": 672220,
+    "end": 764950,
+    "phase": "W0",
+    "phase_name": "Water",
+    "subjective_load": 1.0,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 5,
+    "start": 771630,
+    "end": 783010,
+    "phase": "R0_0",
+    "phase_name": "Rebus",
+    "subjective_load": 3.0,
+    "rebus_score": 0.5
+  },
+  {
+    "pid": 27,
+    "sid": 6,
+    "start": 789600,
+    "end": 801950,
+    "phase": "R0_1",
+    "phase_name": "Rebus",
+    "subjective_load": 3.0,
+    "rebus_score": 0.5
+  },
+  {
+    "pid": 27,
+    "sid": 7,
+    "start": 804000,
+    "end": 818330,
+    "phase": "R0",
+    "phase_name": "RebusEvaluation",
+    "subjective_load": 3.0,
+    "rebus_score": 0.5
+  },
+  {
+    "pid": 27,
+    "sid": 8,
+    "start": 830790,
+    "end": 933330,
+    "phase": "W1",
+    "phase_name": "Water",
+    "subjective_load": 3.0,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 9,
+    "start": 961400,
+    "end": 974540,
+    "phase": "R1_0",
+    "phase_name": "Rebus",
+    "subjective_load": 3.0,
+    "rebus_score": 0.67
+  },
+  {
+    "pid": 27,
+    "sid": 10,
+    "start": 978560,
+    "end": 987980,
+    "phase": "R1_1",
+    "phase_name": "Rebus",
+    "subjective_load": 3.0,
+    "rebus_score": 0.67
+  },
+  {
+    "pid": 27,
+    "sid": 11,
+    "start": 992570,
+    "end": 1007280,
+    "phase": "R1_2",
+    "phase_name": "Rebus",
+    "subjective_load": 3.0,
+    "rebus_score": 0.67
+  },
+  {
+    "pid": 27,
+    "sid": 12,
+    "start": 1008671,
+    "end": 1022671,
+    "phase": "R1",
+    "phase_name": "RebusEvaluation",
+    "subjective_load": 3.0,
+    "rebus_score": 0.67
+  },
+  {
+    "pid": 27,
+    "sid": 13,
+    "start": 1024410,
+    "end": 1089330,
+    "phase": "W2",
+    "phase_name": "Water",
+    "subjective_load": 2.0,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 14,
+    "start": 1106190,
+    "end": 1116030,
+    "phase": "R2_0",
+    "phase_name": "Rebus",
+    "subjective_load": 5.0,
+    "rebus_score": 0.25
+  },
+  {
+    "pid": 27,
+    "sid": 15,
+    "start": 1119880,
+    "end": 1128280,
+    "phase": "R2_1",
+    "phase_name": "Rebus",
+    "subjective_load": 5.0,
+    "rebus_score": 0.25
+  },
+  {
+    "pid": 27,
+    "sid": 16,
+    "start": 1131800,
+    "end": 1143110,
+    "phase": "R2_2",
+    "phase_name": "Rebus",
+    "subjective_load": 5.0,
+    "rebus_score": 0.25
+  },
+  {
+    "pid": 27,
+    "sid": 17,
+    "start": 1147410,
+    "end": 1157730,
+    "phase": "R2_3",
+    "phase_name": "Rebus",
+    "subjective_load": 5.0,
+    "rebus_score": 0.25
+  },
+  {
+    "pid": 27,
+    "sid": 18,
+    "start": 1159000,
+    "end": 1171000,
+    "phase": "R2",
+    "phase_name": "RebusEvaluation",
+    "subjective_load": 5.0,
+    "rebus_score": 0.25
+  },
+  {
+    "pid": 27,
+    "sid": 19,
+    "start": 1171640,
+    "end": 1236670,
+    "phase": "W3",
+    "phase_name": "Water",
+    "subjective_load": 5.0,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 20,
+    "start": 1255260,
+    "end": 1264680,
+    "phase": "R3_0",
+    "phase_name": "Rebus",
+    "subjective_load": 6.0,
+    "rebus_score": 0.2
+  },
+  {
+    "pid": 27,
+    "sid": 21,
+    "start": 1273630,
+    "end": 1284400,
+    "phase": "R3_1",
+    "phase_name": "Rebus",
+    "subjective_load": 6.0,
+    "rebus_score": 0.2
+  },
+  {
+    "pid": 27,
+    "sid": 22,
+    "start": 1287990,
+    "end": 1302340,
+    "phase": "R3_2",
+    "phase_name": "Rebus",
+    "subjective_load": 6.0,
+    "rebus_score": 0.2
+  },
+  {
+    "pid": 27,
+    "sid": 23,
+    "start": 1307660,
+    "end": 1320530,
+    "phase": "R3_3",
+    "phase_name": "Rebus",
+    "subjective_load": 6.0,
+    "rebus_score": 0.2
+  },
+  {
+    "pid": 27,
+    "sid": 24,
+    "start": 1327030,
+    "end": 1339720,
+    "phase": "R3_4",
+    "phase_name": "Rebus",
+    "subjective_load": 6.0,
+    "rebus_score": 0.2
+  },
+  {
+    "pid": 27,
+    "sid": 25,
+    "start": 1340670,
+    "end": 1355330,
+    "phase": "R3",
+    "phase_name": "RebusEvaluation",
+    "subjective_load": 6.0,
+    "rebus_score": 0.2
+  },
+  {
+    "pid": 27,
+    "sid": 26,
+    "start": 1356320,
+    "end": 1452670,
+    "phase": "W4",
+    "phase_name": "Water",
+    "subjective_load": 6.0,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 27,
+    "start": 1470820,
+    "end": 1482550,
+    "phase": "R4_0",
+    "phase_name": "Rebus",
+    "subjective_load": 7.0,
+    "rebus_score": 0.29
+  },
+  {
+    "pid": 27,
+    "sid": 28,
+    "start": 1489130,
+    "end": 1504650,
+    "phase": "R4_1",
+    "phase_name": "Rebus",
+    "subjective_load": 7.0,
+    "rebus_score": 0.29
+  },
+  {
+    "pid": 27,
+    "sid": 29,
+    "start": 1508850,
+    "end": 1529140,
+    "phase": "R4_2",
+    "phase_name": "Rebus",
+    "subjective_load": 7.0,
+    "rebus_score": 0.29
+  },
+  {
+    "pid": 27,
+    "sid": 30,
+    "start": 1535650,
+    "end": 1550650,
+    "phase": "R4_3",
+    "phase_name": "Rebus",
+    "subjective_load": 7.0,
+    "rebus_score": 0.29
+  },
+  {
+    "pid": 27,
+    "sid": 31,
+    "start": 1554350,
+    "end": 1570300,
+    "phase": "R4_4",
+    "phase_name": "Rebus",
+    "subjective_load": 7.0,
+    "rebus_score": 0.29
+  },
+  {
+    "pid": 27,
+    "sid": 32,
+    "start": 1576590,
+    "end": 1593980,
+    "phase": "R4_5",
+    "phase_name": "Rebus",
+    "subjective_load": 7.0,
+    "rebus_score": 0.29
+  },
+  {
+    "pid": 27,
+    "sid": 33,
+    "start": 1600540,
+    "end": 1617340,
+    "phase": "R4_6",
+    "phase_name": "Rebus",
+    "subjective_load": 7.0,
+    "rebus_score": 0.29
+  },
+  {
+    "pid": 27,
+    "sid": 34,
+    "start": 1617670,
+    "end": 1629330,
+    "phase": "R4",
+    "phase_name": "RebusEvaluation",
+    "subjective_load": 7.0,
+    "rebus_score": 0.29
+  },
+  {
+    "pid": 27,
+    "sid": 35,
+    "start": 1628170,
+    "end": 1694000,
+    "phase": "W5",
+    "phase_name": "Water",
+    "subjective_load": 4.0,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 36,
+    "start": 1718310,
+    "end": 1792770,
+    "phase": "STAI-Y2-1",
+    "phase_name": "STAI-Y2",
+    "subjective_load": NaN,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 37,
+    "start": 1797770,
+    "end": 1980340,
+    "phase": "Relax-1",
+    "phase_name": "Relax",
+    "subjective_load": NaN,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 38,
+    "start": 1985340,
+    "end": 2055801,
+    "phase": "NASA-TLX",
+    "phase_name": "NASA-TLX",
+    "subjective_load": NaN,
+    "rebus_score": NaN
+  },
+  {
+    "pid": 27,
+    "sid": 39,
+    "start": 2059670,
+    "end": 2242330,
+    "phase": "Debriefing",
+    "phase_name": "Debriefing",
+    "subjective_load": NaN,
+    "rebus_score": NaN
+  }
+]
