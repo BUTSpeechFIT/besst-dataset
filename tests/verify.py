@@ -5,15 +5,17 @@ from datasets import load_dataset
 
 # Define paths
 ROOT_DIR = os.path.dirname(__file__)
-METADATA_DIR = os.path.join(ROOT_DIR, "metadata/lists")
+#METADATA_DIR = os.path.join(ROOT_DIR, "metadata/lists")
 EXPECTED_VERSIONS = ["cognitive-load", "physical-load"]
 EXPECTED_SUBSETS = ["audio", "audio-video", "audio-video-bio", "audio-video-ecg"]
 SPLIT_VARIANTS = ["a", "b", "c", "d", "e"]
 SPLITS = ["train", "test", "validation"]
 
 
-def check_metadata():
-    """Verify metadata .scp files exist and are readable."""
+def check_metadata(dataset_package_path):
+    """Verify metadata .scp files exist and are readable.
+    :param path:
+    """
     print("\n🔍 Checking metadata integrity...")
 
     missing_files = []
@@ -23,7 +25,7 @@ def check_metadata():
             for split_variant in SPLIT_VARIANTS:
                 for split in SPLITS:
                     metadata_path = os.path.join(
-                        METADATA_DIR, version, subset, split_variant, f"{split}.scp"
+                        dataset_package_path,"metadata","lists", version, subset, split_variant, f"{split}.scp"
                     )
                     if not os.path.exists(metadata_path):
                         missing_files.append(metadata_path)
@@ -39,7 +41,7 @@ def check_metadata():
             for split_variant in SPLIT_VARIANTS:
                 for split in SPLITS:
                     metadata_path = os.path.join(
-                        METADATA_DIR, version, subset, split_variant, f"{split}.scp"
+                        dataset_package_path,"metadata","lists", version, subset, split_variant, f"{split}.scp"
                     )
                     if os.path.exists(metadata_path):
                         with open(metadata_path, "r") as f:
@@ -48,7 +50,7 @@ def check_metadata():
                                 print(f"⚠️ {metadata_path} is empty.")
 
 
-def check_raw_data(data_dir):
+def check_raw_data(dataset_package_path, data_dir):
     """Verify the existence of raw data files."""
     print("\n🔍 Checking raw data integrity...")
 
@@ -63,7 +65,7 @@ def check_raw_data(data_dir):
             for split_variant in SPLIT_VARIANTS:
                 for split in SPLITS:
                     metadata_path = os.path.join(
-                        METADATA_DIR, version, subset, split_variant, f"{split}.scp"
+                        dataset_package_path,"metadata","lists", version, subset, split_variant, f"{split}.scp"
                     )
 
                     if os.path.exists(metadata_path):
@@ -87,17 +89,16 @@ def check_raw_data(data_dir):
         print("✅ All raw data files are present.")
 
 
-def test_dataset_loading(data_dir):
+def test_dataset_loading(dataset_package_path, data_dir, variant="cognitive-load_audio-a"):
     """Try loading the dataset to verify it works."""
     print("\n🔍 Testing dataset loading...")
 
     try:
         dataset = load_dataset(
-            "dataset/besst.py",
-            name="cognitive-load_audio_a",
+            f"{dataset_package_path}/dataset.py",
+            name=variant,
             data_dir=data_dir,
-            cache_dir="./cache",
-            metadata_dir=os.path.abspath("dataset/metadata"),
+            metadata_dir=f"{dataset_package_path}/metadata",
             trust_remote_code=True,  # Ensures it reads from the local script
         )
         print("✅ Dataset loaded successfully!")
@@ -115,8 +116,9 @@ def test_dataset_loading(data_dir):
 if __name__ == "__main__":
     # data_dir = input("\n📂 Enter the path to the raw data directory: ").strip()
     data_dir = "/mnt/matylda3/ipesan/EXP/besst-process/dataset/v5/raw/"
-    check_metadata()
-    check_raw_data(data_dir)
-    test_dataset_loading(data_dir)
+    dataset_package_path="/homes/kazi/ipesan/devel/python/besst-dataset/dataset/"
+    check_metadata(dataset_package_path)
+    check_raw_data(dataset_package_path,data_dir)
+    test_dataset_loading(dataset_package_path, data_dir)
 
     print("\n🎯 Dataset verification completed.")

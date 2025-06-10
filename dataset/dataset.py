@@ -32,12 +32,12 @@ class BESSTDatasetConfig(datasets.BuilderConfig):
 class BESSTDataset(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
         BESSTDatasetConfig(
-            name=f"{target_type}_{subset}_{split}",
+            name=f"{target_type}_{subset}-{split}",
             target_type=target_type,
             subset=subset,
             split_variant=split,
             description=f"{target_type} dataset with {subset} modalities and split variant {split}.",
-            version=datasets.Version("0.5.0"),
+            version=datasets.Version("0.6.0"),
         )
         for target_type in ["cognitive-load", "physical-load"]
         for subset in ["audio", "audio-video", "audio-video-bio", "audio-video-ecg"]
