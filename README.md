@@ -92,3 +92,5 @@ If you use this dataset in your research, please cite it as follows:
         }
 ```
 ### License
+
+See: [speech.fit.vut.cz/software/besst](speech.fit.vut.cz/software/besst)
