@@ -1,0 +1,19 @@
+# Python build artifacts
+*.egg-info/
+build/
+dist/
+*.pyc
+__pycache__/
+.eggs/
+
+# PyCharm
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.swp
+*.swo
+*~
