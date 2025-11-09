@@ -21,13 +21,13 @@ Stress can impair cognitive functions, impacting critical areas like aviation, s
 
 ## Dataset Features
 
-| Field            | Type           | Description                                                                 |
-|------------------|----------------|-----------------------------------------------------------------------------|
-| `id`             | `string`       | Unique identifier for each sample.                                         |
-| `audio`          | `Audio`        | Path to the audio file (supports resampling).                              |
-| `start`          | `int32`        | Start time of the segment (in seconds).                                    |
-| `end`            | `int32`        | End time of the segment (in seconds).                                      |
-| `cognitive_load` | `ClassLabel`   | Cognitive load level (`low`, `medium`, `high`).                            |
+| Field            | Type           | Description                                     |
+|------------------|----------------|-------------------------------------------------|
+| `id`             | `string`       | Unique identifier for each sample.              |
+| `audio`          | `Audio`        | Path to the audio file (supports resampling).   |
+| `start`          | `int32`        | Start time of the segment (in milliseconds).    |
+| `end`            | `int32`        | End time of the segment (in milliseconds).      |
+| `cognitive_load` | `ClassLabel`   | Cognitive load level (`low`, `medium`, `high`). |
 
 ---
 
@@ -48,14 +48,21 @@ The BESST protocol was used to collect data under controlled conditions. Partici
 ## Getting Started
 
 ### Prerequisites
-- Python 3.7 or later
-- Hugging Face `datasets` library: `pip install datasets`
+- Python 3.8 or later
+- Hugging Face `datasets` library
 
 ### Installation
-Clone the repository:
+
+**Option 1: Editable install (for development)**
 ```bash
 git clone https://github.com/BUTSpeechFIT/besst-dataset.git
-cd dataset-dataset
+cd besst-dataset
+pip install -e .
+```
+
+**Option 2: Direct install from git**
+```bash
+pip install git+https://github.com/BUTSpeechFIT/besst-dataset.git@v0.6.0
 ```
 
 ### Usage
@@ -64,14 +71,33 @@ Load the dataset using Hugging Face's datasets library:
 
 ```python
 from datasets import load_dataset
-# Load cognitive-load dataset, audio-video subset, split variant 'a'
+
+# Load cognitive-load dataset (v0.6: phase-based splits)
+# Audio-only, split variant 'a'
 dataset = load_dataset(
-    "besst_dataset",
-    name="cognitive-load_audio-video_a",
-    data_dir="/path/to/data",
+    "dataset/dataset.py",  # After installation
+    name="cognitive-load_audio-a",
+    data_dir="/path/to/raw/data",  # Path to audio files
+    trust_remote_code=True,
 )
 
+# Access splits
+train_data = dataset["train"]
+val_data = dataset["validation"]
+test_data = dataset["test"]
 ```
+
+### Version History
+
+**v0.6.0** (2025-11-09)
+- Added BESST v6 with phase-based cognitive load splits
+- Fixed jack-knifing methodology (equalized test sets across folds)
+- Documented class imbalance (compensated via loss weighting)
+- Excluded learning phases (R0) and debriefing
+- All 71 participants in train/val/test (within-subject design)
+
+**v0.5.0** (2024)
+- Initial release with participant-based splits
 
 ### Citation
 If you use this dataset in your research, please cite it as follows:
@@ -86,7 +112,7 @@ If you use this dataset in your research, please cite it as follows:
           number = {1},
           journal = {Scientific Data},
           publisher = {Springer Science and Business Media LLC},
-          author = {Pešán,  Jan and Juřík,  Vojtěch and Ružičková,  Alexandra and Svoboda,  Vojtěch and Janoušek,  Oto and Němcová,  Andrea and Bojanovská,  Hana and Aldabaghová,  Jasmína and Kyslík,  Filip and Vodičková,  Kateřina and Sodomová,  Adéla and Bartys,  Patrik and Chudý,  Peter and Černocký,  Jan},
+          author = {Pešán, Jan and Juřík, Vojtěch and Ružičková, Alexandra and Svoboda, Vojtěch and Janoušek, Oto and Němcová, Andrea and Bojanovská, Hana and Aldabaghová, Jasmína and Kyslík, Filip and Vodičková, Kateřina and Sodomová, Adéla and Bartys, Patrik and Chudý, Peter and Černocký, Jan},
           year = {2024},
           month = nov
         }

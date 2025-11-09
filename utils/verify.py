@@ -93,24 +93,24 @@ def test_dataset_loading(dataset_package_path, data_dir, variant="cognitive-load
     """Try loading the dataset to verify it works."""
     print("\n🔍 Testing dataset loading...")
 
-    try:
-        dataset = load_dataset(
-            f"{dataset_package_path}/dataset.py",
-            name=variant,
-            data_dir=data_dir,
-            metadata_dir=f"{dataset_package_path}/metadata",
-            trust_remote_code=True,  # Ensures it reads from the local script
-        )
-        print("✅ Dataset loaded successfully!")
+    # try:
+    dataset = load_dataset(
+        f"{dataset_package_path}/dataset.py",
+        name=variant,
+        data_dir=data_dir,
+        metadata_dir=f"{dataset_package_path}/metadata",
+        trust_remote_code=True,  # Ensures it reads from the local script
+    )
+    print("✅ Dataset loaded successfully!")
 
-        # Print sample
-        sample = dataset["train"][0]
-        print("\n🔍 Sample data:")
-        for key, value in sample.items():
-            print(f"  {key}: {value}")
+    # Print sample
+    sample = dataset["train"][0]
+    print("\n🔍 Sample data:")
+    for key, value in sample.items():
+        print(f"  {key}: {value}")
 
-    except Exception as e:
-        print(f"❌ Dataset loading failed: {e}")
+    # except Exception as e:
+    #     print(f"❌ Dataset loading failed: {e}")
 
 
 if __name__ == "__main__":

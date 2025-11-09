@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "besst-dataset"
+version = "0.6.0"
+description = "BESST multimodal stress/cognitive load dataset"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "CC BY-NC-SA 4.0"}
+authors = [
+    {name = "Jean Pešan", email = "ipesan@fit.vutbr.cz"}
+]
+keywords = ["dataset", "multimodal", "stress", "cognitive-load", "affective-computing"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+dependencies = [
+    "datasets>=2.0.0",
+    "numpy>=1.20.0",
+    "librosa>=0.9.0",
+    "soundfile>=0.10.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/besst-dataset"
+Repository = "https://github.com/yourusername/besst-dataset"
+
+[tool.setuptools]
+packages = ["dataset"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+dataset = ["metadata/**/*", "**/*.py"]
