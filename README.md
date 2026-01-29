@@ -24,7 +24,8 @@ Stress can impair cognitive functions, impacting critical areas like aviation, s
 | Field            | Type           | Description                                     |
 |------------------|----------------|-------------------------------------------------|
 | `id`             | `string`       | Unique identifier for each sample.              |
-| `audio`          | `Audio`        | Path to the audio file (supports resampling).   |
+| `audio`          | `Audio`        | Audio array dict with `array` (numpy) and `sampling_rate`. |
+| `pid`            | `int32`        | Participant ID.                                 |
 | `start`          | `int32`        | Start time of the segment (in milliseconds).    |
 | `end`            | `int32`        | End time of the segment (in milliseconds).      |
 | `cognitive_load` | `ClassLabel`   | Cognitive load level (`low`, `medium`, `high`). |
@@ -62,7 +63,7 @@ pip install -e .
 
 **Option 2: Direct install from git**
 ```bash
-pip install git+https://github.com/BUTSpeechFIT/besst-dataset.git@v0.6.0
+pip install git+https://github.com/BUTSpeechFIT/besst-dataset.git@v1.0.0
 ```
 
 ### Usage
@@ -72,13 +73,15 @@ Load the dataset using Hugging Face's datasets library:
 ```python
 from datasets import load_dataset
 
-# Load cognitive-load dataset (v0.6: phase-based splits)
+# Load cognitive-load dataset (v1.0: direct audio loading with normalization)
 # Audio-only, split variant 'a'
 dataset = load_dataset(
     "dataset/dataset.py",  # After installation
     name="cognitive-load_audio-a",
     data_dir="/path/to/raw/data",  # Path to audio files
     trust_remote_code=True,
+    target_fs=16000,              # Target sampling rate
+    speaker_normalization=True,   # Normalize per speaker
 )
 
 # Access splits
@@ -87,7 +90,34 @@ val_data = dataset["validation"]
 test_data = dataset["test"]
 ```
 
+### Dataset Variants
+
+The package provides three dataset classes for different classification tasks:
+
+1. **`dataset/dataset.py`** - Cognitive/physical load classification
+   - 3 classes: `low`, `medium`, `high`
+   - Configurations: `cognitive-load_audio-{a,b,c,d,e}`, `physical-load_audio-{a,b,c,d,e}`
+
+2. **`dataset/speaker_dataset.py`** - Speaker identification
+   - 79 classes: speaker IDs 7-90
+   - Configurations: `cognitive-load_audio-{a,b,c,d,e}`, `physical-load_audio-{a,b,c,d,e}`
+
+3. **`dataset/gender_dataset.py`** - Gender classification
+   - 2 classes: `F` (female), `M` (male)
+   - Configurations: `cognitive-load_audio-{a,b,c,d,e}`, `physical-load_audio-{a,b,c,d,e}`
+
+All variants support the same parameters (`target_fs`, `speaker_normalization`) and provide identical audio processing.
+
 ### Version History
+
+**v1.0.0** (2026-01-29)
+- **Major**: Proper jack-knifing methodology - ONE shared test set across all 5 folds (a-e), enabling valid averaging of test results
+- Direct audio loading (returns numpy arrays instead of file paths)
+- Speaker normalization with precomputed stats (`speaker_normalization=True`)
+- Audio resampling to target sample rate (`target_fs=16000`)
+- New `pid` field in output (participant ID)
+- New dataset variants: speaker identification (`speaker_dataset.py`), gender classification (`gender_dataset.py`)
+- Simplified cognitive-load lists to audio-only (multi-modal subsets removed)
 
 **v0.6.0** (2025-11-09)
 - Added BESST v6 with phase-based cognitive load splits

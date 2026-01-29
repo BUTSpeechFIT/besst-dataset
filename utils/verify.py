@@ -100,6 +100,7 @@ def test_dataset_loading(dataset_package_path, data_dir, variant="cognitive-load
         data_dir=data_dir,
         metadata_dir=f"{dataset_package_path}/metadata",
         trust_remote_code=True,  # Ensures it reads from the local script
+        speaker_normalization=True
     )
     print("✅ Dataset loaded successfully!")
 

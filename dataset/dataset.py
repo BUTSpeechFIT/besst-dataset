@@ -1,15 +1,16 @@
+import json
+import logging
 import os
 import shutil
 from argparse import ArgumentParser, Namespace
 
 import datasets
+import librosa
 import numpy as np
+import soundfile as sf
 
 load2label = {"1": "low", "2": "medium", "3": "high"}
-
-# Metadata directory inside the repository
-METADATA_DIR = os.path.join(os.path.dirname(__file__), "metadata/lists")
-
+logging.basicConfig(level=logging.INFO)
 
 class BESSTDatasetConfig(datasets.BuilderConfig):
     """BuilderConfig for BESST dataset."""
@@ -30,6 +31,15 @@ class BESSTDatasetConfig(datasets.BuilderConfig):
 
 
 class BESSTDataset(datasets.GeneratorBasedBuilder):
+    def __init__(self, *args, target_fs=16000, speaker_normalization=True, **kwargs):
+        self.logger = datasets.logging.get_logger(f"BESSTDataset")
+
+        self.target_fs = target_fs
+        self.speaker_normalization = speaker_normalization
+        self.logger.info(f"Loading BESST dataset. fs: {target_fs} Hz, speaker_normalization: {speaker_normalization}")
+        super().__init__(*args, **kwargs)
+
+
     BUILDER_CONFIGS = [
         BESSTDatasetConfig(
             name=f"{target_type}_{subset}-{split}",
@@ -37,7 +47,7 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
             subset=subset,
             split_variant=split,
             description=f"{target_type} dataset with {subset} modalities and split variant {split}.",
-            version=datasets.Version("0.6.0"),
+            version=datasets.Version("1.0.0"),
         )
         for target_type in ["cognitive-load", "physical-load"]
         for subset in ["audio", "audio-video", "audio-video-bio", "audio-video-ecg"]
@@ -48,9 +58,10 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
     def _info(self):
         features = {
             "id": datasets.Value("string"),
-            "audio": datasets.Audio(sampling_rate=16000),
+            "audio": datasets.Audio(sampling_rate=self.target_fs),
             "start": datasets.Value("int32"),
             "end": datasets.Value("int32"),
+            "pid": datasets.Value("int32"),
             "target": datasets.ClassLabel(num_classes=3, names=["low", "medium", "high"]),
         }
         # Add subset-specific features
@@ -127,22 +138,58 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
         """
         Reads metadata from `.scp` files and links raw data paths.
         """
+        current_pid = None
+        f = None
         metadata_file = os.path.join(metadata_dir, f"{split}.scp")
+
+        speaker_stats_file = os.path.join(self.config.metadata_dir, "stats/", f"{self.config.target_type}_{self.config.subset}-{self.config.split_variant}")
         if not os.path.exists(metadata_file):
             raise FileNotFoundError(f"❌ Missing metadata file: {metadata_file}")
 
         try:
-            split_list = np.loadtxt(metadata_file, dtype=object, delimiter=";", skiprows=1)
+            split_list = np.loadtxt(metadata_file, dtype=object, delimiter=";")
         except Exception as e:
             raise RuntimeError(f"❌ Error reading {metadata_file}: {e}")
 
+        if self.speaker_normalization:
+            with open(speaker_stats_file, 'r') as fp:
+                speaker_stats = json.load(fp);
+
         for row in split_list:
             pid, segid, start, end, _, segment_name, _, _, _, cognitive_load_label = row
+            audio_path = os.path.join(raw_data_dir, "audio", pid, "close_talk.wav")
+            # data, sr = sf.read(audio_path, dtype="float32")
+            start_ms = int(start)
+            end_ms = int(end)
+
+            if pid != current_pid:
+                if f is not None:
+                    f.close()
+                f = sf.SoundFile(audio_path, mode="r")
+                current_pid = pid
+
+                # compute frame indices and read only that window
+            s = int(start_ms * f.samplerate / 1000)
+            n_frames = int((end_ms - start_ms) * f.samplerate / 1000)
+            f.seek(s)
+            segment = f.read(n_frames)
+
+            if self.speaker_normalization:
+                segment = (segment - speaker_stats[pid][0]) / speaker_stats[pid][1]
+
+            # 3) Resample if needed
+            if f.samplerate  != self.target_fs:
+                segment = librosa.resample(segment,orig_sr=f.samplerate,target_sr=self.target_fs)
+
             yield f"{pid}_{segid}", {
                 "id": f"{pid}_{segid}",
-                "audio": os.path.join(raw_data_dir, "audio", pid, "close_talk.wav"),
-                "start": int(start),
-                "end": int(end),
+                "audio": {
+                    "array": segment,
+                    "sampling_rate": self.target_fs,
+                },
+                "start": start,
+                "end": end,
+                "pid": int(pid),
                 "target": load2label[cognitive_load_label],
                 "video": os.path.join(raw_data_dir, "video", segment_name) if "video" in self.config.subset else None,
                 "bio_signals": os.path.join(raw_data_dir, "bio", segment_name) if "bio" in self.config.subset else None,

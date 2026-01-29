@@ -1,4 +1,4 @@
-#pid;sid;start;end;phase;phase_name;subjective_load;rebus_score
+pid;sid;start;end;phase;phase_name;subjective_load;rebus_score
 7;0;0;246430;Instructions;Instructions;nan;nan
 7;1;251430;412240;PSS14;PSS14;nan;nan
 7;2;417240;614320;Relax-0;Relax;nan;nan

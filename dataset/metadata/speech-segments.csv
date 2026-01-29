@@ -1,4 +1,4 @@
-#pid;sid;start;end;text;phase;phase_name;subjective_load;rebus_score
+pid;sid;start;end;text;phase;phase_name;subjective_load;rebus_score
 7;0;742048;767488;NO A TAKŽE NA OBRÁZKU JE SKLENICE OBSAHUJÍCÍ NĚJAKÉ RŮŽE RŮŽOVÉ RŮŽE NA NO ASI DŘEVĚNÉM STOLE A OBRÁZKU JE NĚJAKÝ PARK A V POZADÍ JE VELKÁ VĚŽ ASI NĚJAKÁ NĚJAK NĚJAKÝ KOSTEL;W0;Water;3.0;nan
 7;1;778288;783158;NO OBRÁZKU JE NĚJAKEJ JO NĚJAKÉ;W0;Water;3.0;nan
 7;2;785568;794118;BUDOVY Z TOHO LEVÁ ČÁST JO VYPADÁ VELICE TAK ZASTARALÉ TAK TAK PĚKNĚ SPOUSTU SPOUSTU KNIHOU;W0;Water;3.0;nan

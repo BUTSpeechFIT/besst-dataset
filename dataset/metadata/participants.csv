@@ -1,4 +1,4 @@
-#pid;gender;PSS14;STAI-Y1-pre;STAI-Y1-post;NASATLX;audio/tabletop;audio/close_talk;video/face;video/left;video/right;video/bucket;bio/ecg;bio/rr;bio/eda;bio/temp;bio/acc;bio/acc2
+pid;gender;PSS14;STAI-Y1-pre;STAI-Y1-post;NASATLX;audio/tabletop;audio/close_talk;video/face;video/left;video/right;video/bucket;bio/ecg;bio/rr;bio/eda;bio/temp;bio/acc;bio/acc2
 7;M;29;36;40;375;1;1;1;1;1;1;1;1;1;1;1;1
 8;M;26;42;39;370;1;1;1;1;1;1;1;1;1;1;1;1
 9;F;27;52;47;290;1;1;1;1;1;1;1;1;1;1;1;1

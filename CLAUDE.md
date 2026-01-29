@@ -10,7 +10,7 @@ The BESST Cognitive Load Dataset is a multimodal dataset for studying speech pro
 - 79 participants with 8 signal types
 - Supports train/validation/test splits with 5 jackknifing variants (a-e)
 - Targets: cognitive load (low/medium/high), physical load, speaker identification, gender
-- Modality subsets: audio, audio-video, audio-video-bio, audio-video-ecg
+- Modality: audio (direct numpy array loading with optional speaker normalization)
 - Raw data must be obtained separately from https://speech.fit.vut.cz/software/besst
 
 ## Architecture
@@ -31,13 +31,13 @@ All three share the same architecture but differ in their target labels:
 
 ### Configuration System
 
-Each dataset class generates 40 configurations (BUILDER_CONFIGS) as combinations of:
+Each dataset class generates 10 configurations (BUILDER_CONFIGS) as combinations of:
 - **target_type**: `cognitive-load` or `physical-load`
-- **subset**: `audio`, `audio-video`, `audio-video-bio`, `audio-video-ecg`
+- **subset**: `audio` (only audio subset available in v1.0.0)
 - **split_variant**: `a`, `b`, `c`, `d`, `e` (jackknifing variants)
 
 Configuration naming: `{target_type}_{subset}-{split_variant}`
-Example: `cognitive-load_audio-video-a`
+Example: `cognitive-load_audio-a`
 
 ### Data Loading Pipeline
 
@@ -112,14 +112,18 @@ dataset/metadata/
 ├── speech-segments.csv       # All speech segments with timing and labels
 ├── semantic-segments.csv     # Semantic annotations
 ├── lists/                    # Train/val/test splits
-│   └── {target_type}/       # cognitive-load, physical-load
-│       └── {subset}/        # audio, audio-video, etc.
-│           └── {variant}/   # a, b, c, d, e
-│               ├── train.scp
-│               ├── validation.scp
-│               └── test.scp
+│   ├── cognitive-load/      # Cognitive load splits (v1.0.0: shared test set)
+│   │   └── audio/           # Audio-only subset
+│   │       ├── test.scp     # Shared test set for all variants
+│   │       ├── a/           # Variant a: unique train/val split
+│   │       │   ├── train.scp
+│   │       │   ├── validation.scp
+│   │       │   └── test.scp -> ../test.scp (symlink)
+│   │       └── b/, c/, d/, e/  # Other variants (same structure)
+│   └── physical-load/       # Physical load splits
+│       └── audio/           # (same structure as cognitive-load)
 └── stats/                   # Precomputed speaker statistics
-    └── {target_type}_{subset}-{variant}  # JSON files
+    └── {target_type}_{subset}-{variant}.json  # e.g., cognitive-load_audio-a.json
 ```
 
 ### .scp File Format
@@ -145,8 +149,17 @@ Key fields:
 - Seeks to segment boundaries rather than loading full audio files
 - Uses `DEFAULT_WRITER_BATCH_SIZE = 50` for dataset generation
 
-### Split Variants
-The 5 jackknifing variants (a-e) provide different train/val/test partitions for cross-validation and robustness testing.
+### Split Variants (v1.0.0 Jack-knifing Methodology)
+
+**Important change in v1.0.0**: Proper jack-knifing methodology implemented.
+
+- **ONE shared test set** across all 5 variants (a-e) for cognitive-load
+- Each variant has **unique train/validation splits**
+- The `test.scp` file exists at the `audio/` level and is symlinked into each variant
+- **Benefit**: Results can be averaged across different training configurations while evaluating on the same test set
+- **Scientific validity**: Enables proper cross-validation - different training conditions, consistent evaluation
+
+This differs from v0.6.0 where each variant had different test sets, making result averaging scientifically invalid.
 
 ## Citation
 

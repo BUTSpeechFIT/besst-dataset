@@ -32,7 +32,7 @@ class BESSTDatasetConfig(datasets.BuilderConfig):
 
 class BESSTDataset(datasets.GeneratorBasedBuilder):
     def __init__(self, *args, target_fs=16000, speaker_normalization=True, **kwargs):
-        self.logger = datasets.logging.get_logger(f"BESSTDataset")
+        self.logger = datasets.logging.get_logger(f"BESSTSpeakerDataset")
 
         self.target_fs = target_fs
         self.speaker_normalization = speaker_normalization
@@ -47,7 +47,7 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
             subset=subset,
             split_variant=split,
             description=f"{target_type} dataset with {subset} modalities and split variant {split}.",
-            version=datasets.Version("0.8.2"),
+            version=datasets.Version("1.0.0"),
         )
         for target_type in ["cognitive-load", "physical-load"]
         for subset in ["audio", "audio-video", "audio-video-bio", "audio-video-ecg"]
@@ -62,7 +62,7 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
             "start": datasets.Value("int32"),
             "end": datasets.Value("int32"),
             "pid": datasets.Value("int32"),
-            "target": datasets.ClassLabel(num_classes=3, names=["low", "medium", "high"]),
+            "target": datasets.ClassLabel(num_classes=79, names=["7","8","9","10","11","13","14","15","16","17","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","40","41","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90"]),
         }
         # Add subset-specific features
         if "video" in self.config.subset:
@@ -190,7 +190,7 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
                 "start": start,
                 "end": end,
                 "pid": int(pid),
-                "target": load2label[cognitive_load_label],
+                "target": pid,
                 "video": os.path.join(raw_data_dir, "video", segment_name) if "video" in self.config.subset else None,
                 "bio_signals": os.path.join(raw_data_dir, "bio", segment_name) if "bio" in self.config.subset else None,
                 "ecg": os.path.join(raw_data_dir, "ecg", segment_name) if "ecg" in self.config.subset else None,
