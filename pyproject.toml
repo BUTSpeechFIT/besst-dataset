@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "besst-dataset"
-version = "0.6.0"
+version = "1.0.2"
 description = "BESST multimodal stress/cognitive load dataset"
 readme = "README.md"
 requires-python = ">=3.8"

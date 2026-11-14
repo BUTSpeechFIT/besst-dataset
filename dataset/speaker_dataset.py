@@ -1,7 +1,7 @@
+import hashlib
 import json
 import logging
 import os
-import shutil
 from argparse import ArgumentParser, Namespace
 
 import datasets
@@ -15,29 +15,87 @@ logging.basicConfig(level=logging.INFO)
 class BESSTDatasetConfig(datasets.BuilderConfig):
     """BuilderConfig for BESST dataset."""
 
-    def __init__(self, target_type, subset, split_variant, **kwargs):
+    def __init__(self, target_type, subset, split_variant, metadata_dir=None, target_fs=16000,
+                 speaker_normalization=True, **kwargs):
         """
         Args:
             target_type (str): The target type ('cognitive-load' or 'physical-load').
             subset (str): The subset ('audio', 'audio-video', etc.).
             split_variant (str): The jackknifing split variant ('a', 'b', 'c', 'd', 'e').
+            metadata_dir (str): Directory with `lists/` and `stats/` (the package's `dataset/metadata`).
+            target_fs (int): Output sampling rate.
+            speaker_normalization (bool): Normalise each segment with the speaker's precomputed mean/std.
             **kwargs: Additional keyword arguments passed to BuilderConfig.
         """
         super().__init__(**kwargs)
         self.target_type = target_type
         self.subset = subset
         self.split_variant = split_variant
-        self.metadata_dir = kwargs.get("metadata_dir")
+        self.metadata_dir = metadata_dir
+        self.target_fs = target_fs
+        self.speaker_normalization = speaker_normalization
+
+    # --- everything below defines WHAT DATA a config describes; it all feeds the cache key -----------------------
+    def lists_dir(self):
+        return os.path.join(self.metadata_dir, "lists", self.target_type, self.subset, self.split_variant)
+
+    def stats_file(self):
+        return os.path.join(self.metadata_dir, "stats", "{}_{}-{}".format(self.target_type, self.subset, self.split_variant))
+
+    def metadata_files(self):
+        """Files whose content determines the examples of this config (lists + speaker stats)."""
+        files = [os.path.join(self.lists_dir(), "{}.scp".format(split)) for split in ("train", "validation", "test")]
+        files.append(self.stats_file())
+        return files
+
+    def lists_hash(self):
+        """Content hash of `metadata_files()` (symlinks followed), or None when no metadata_dir is set."""
+        if not self.metadata_dir:
+            return None
+        h = hashlib.sha256()
+        for path in self.metadata_files():
+            h.update(os.path.basename(path).encode("utf-8"))
+            if os.path.isfile(path):
+                with open(path, "rb") as fp:
+                    h.update(fp.read())
+            else:
+                h.update(b"<missing>")
+        return h.hexdigest()[:16]
+
+    def create_config_id(self, config_kwargs, custom_features=None):
+        """
+        Cache key = config name + hash of (lists content, speaker stats, target_fs, speaker_normalization, data_dir).
+        The metadata *path* is deliberately left out: identical lists in two locations are the same data, and a changed list
+        in the same location is different data. Before v1.0.2 the id ignored the lists entirely, so a stale copy of the
+        metadata was served from the HF cache after the package was upgraded (BESST v0.5 lists under a v0.6.0 install).
+        """
+        kwargs = dict(config_kwargs)
+        kwargs.pop("metadata_dir", None)
+        kwargs["lists_hash"] = self.lists_hash() or "none"
+        kwargs["target_fs"] = int(self.target_fs)
+        kwargs["speaker_normalization"] = bool(self.speaker_normalization)
+        return super().create_config_id(kwargs, custom_features=custom_features)
 
 
 class BESSTDataset(datasets.GeneratorBasedBuilder):
     def __init__(self, *args, target_fs=16000, speaker_normalization=True, **kwargs):
+        # target_fs / speaker_normalization live on the config so that they are part of the cache key.
+        kwargs["target_fs"] = target_fs
+        kwargs["speaker_normalization"] = speaker_normalization
         self.logger = datasets.logging.get_logger(f"BESSTSpeakerDataset")
 
-        self.target_fs = target_fs
-        self.speaker_normalization = speaker_normalization
         self.logger.info(f"Loading BESST dataset. fs: {target_fs} Hz, speaker_normalization: {speaker_normalization}")
         super().__init__(*args, **kwargs)
+        self.logger.info("BESST config %s: metadata_dir=%s lists_hash=%s", self.config.name, self.config.metadata_dir,
+                         self.config.lists_hash())
+
+    @property
+    def target_fs(self):
+        return self.config.target_fs
+
+    @property
+    def speaker_normalization(self):
+        return self.config.speaker_normalization
 
 
     BUILDER_CONFIGS = [
@@ -47,7 +105,7 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
             subset=subset,
             split_variant=split,
             description=f"{target_type} dataset with {subset} modalities and split variant {split}.",
-            version=datasets.Version("1.0.0"),
+            version=datasets.Version("1.0.2"),
         )
         for target_type in ["cognitive-load", "physical-load"]
         for subset in ["audio", "audio-video", "audio-video-bio", "audio-video-ecg"]
@@ -93,7 +151,7 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager):
         """
-        Caches metadata from the local repository and sets up raw data directory.
+        Resolves the split lists directly in `metadata_dir` (no cached copy: the cache key already covers their content).
         """
         raw_data_dir = self.config.data_dir
         if not raw_data_dir or not os.path.exists(raw_data_dir):
@@ -102,22 +160,15 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
                 "Please download the dataset manually and provide the correct `data_dir` path.\n"
                 "For instructions, visit: https://speech.fit.vut.cz/software/besst"
             )
+        if not self.config.metadata_dir or not os.path.isdir(self.config.metadata_dir):
+            raise FileNotFoundError(
+                f"❌ metadata_dir not found: {self.config.metadata_dir}. Pass `metadata_dir=<package>/dataset/metadata`."
+            )
 
-
-        # ✅ Define cache location for metadata
-        cached_metadata_dir = os.path.join(dl_manager.download_config.cache_dir, "metadata")
-
-        # ✅ Copy metadata to cache if not already cached
-        if not os.path.exists(cached_metadata_dir):
-            shutil.copytree(self.config.metadata_dir, cached_metadata_dir)
-
-        # Ensure correct metadata path
-        partition_dir = os.path.join(
-            cached_metadata_dir, "lists", self.config.target_type, self.config.subset, self.config.split_variant
-        )
-
-        if not os.path.exists(partition_dir):
+        partition_dir = self.config.lists_dir()
+        if not os.path.isdir(partition_dir):
             raise FileNotFoundError(f"❌ Metadata directory does not exist: {partition_dir}")
+        self.logger.info("Using lists from %s (lists_hash=%s)", partition_dir, self.config.lists_hash())
 
         return [
             datasets.SplitGenerator(
@@ -142,7 +193,7 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
         f = None
         metadata_file = os.path.join(metadata_dir, f"{split}.scp")
 
-        speaker_stats_file = os.path.join(self.config.metadata_dir, "stats/", f"{self.config.target_type}_{self.config.subset}-{self.config.split_variant}")
+        speaker_stats_file = self.config.stats_file()
         if not os.path.exists(metadata_file):
             raise FileNotFoundError(f"❌ Missing metadata file: {metadata_file}")
 

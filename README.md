@@ -110,6 +110,15 @@ All variants support the same parameters (`target_fs`, `speaker_normalization`) 
 
 ### Version History
 
+**v1.0.2** (2026-11-15)
+- **Fix**: the Hugging Face cache key now covers the data a config describes. `create_config_id` adds a content hash of the
+  split lists and speaker stats (and `participants.csv` for the gender variant) plus `target_fs` and `speaker_normalization`.
+  Before, the key ignored the lists, so after upgrading the package a stale copy of the metadata was still served from the
+  HF cache (BESST v0.5 lists under a v0.6.0 install; all BESST results of that period were affected).
+- Lists are read directly from `metadata_dir`; the one-shot copy into the HF `downloads/metadata` cache is gone.
+- `target_fs` and `speaker_normalization` are config attributes (`builder.config.target_fs`); the builder keeps the old properties.
+- Tests: `python -m unittest discover -s tests` (no audio needed).
+
 **v1.0.0** (2026-01-29)
 - **Major**: Proper jack-knifing methodology - ONE shared test set across all 5 folds (a-e), enabling valid averaging of test results
 - Direct audio loading (returns numpy arrays instead of file paths)
