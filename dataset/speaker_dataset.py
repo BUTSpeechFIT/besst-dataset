@@ -198,7 +198,7 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
             raise FileNotFoundError(f"❌ Missing metadata file: {metadata_file}")
 
         try:
-            split_list = np.loadtxt(metadata_file, dtype=object, delimiter=";", skiprows=1)
+            split_list = np.loadtxt(metadata_file, dtype=object, delimiter=";")
         except Exception as e:
             raise RuntimeError(f"❌ Error reading {metadata_file}: {e}")
 

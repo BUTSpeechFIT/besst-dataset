@@ -117,6 +117,12 @@ All variants support the same parameters (`target_fs`, `speaker_normalization`) 
 
 ### Version History
 
+**v1.0.3** (2026-11-15)
+- **Fix**: the speaker-ID builder (`speaker_dataset.py`) skipped the first row of every split list (`skiprows=1` on header-less
+  `.scp` files), so fold a lost `7_16` (train), `7_15` (validation) and `7_22` (test): 774 / 220 / 451 instead of 775 / 221 / 452.
+  The cognitive-load and gender builders were not affected. New test: every builder yields one example per list row.
+- Docs: the reading-span task, the label rule and the subjective-rating question (see Experimental Protocol).
+
 **v1.0.2** (2026-11-15)
 - **Fix**: the Hugging Face cache key now covers the data a config describes. `create_config_id` adds a content hash of the
   split lists and speaker stats (and `participants.csv` for the gender variant) plus `target_fs` and `speaker_normalization`.

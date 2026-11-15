@@ -15,7 +15,7 @@ long_description = readme_file.read_text() if readme_file.exists() else ""
 
 setup(
     name="besst-dataset",
-    version="1.0.2",
+    version="1.0.3",
     description="BESST multimodal stress/cognitive load dataset",
     long_description=long_description,
     long_description_content_type="text/markdown",
