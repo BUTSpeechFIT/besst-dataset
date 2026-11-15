@@ -36,6 +36,13 @@ Stress can impair cognitive functions, impacting critical areas like aviation, s
 
 The BESST protocol was used to collect data under controlled conditions. Participants performed tasks designed to induce cognitive load and stress while speech, physiological, and behavioral signals were recorded.
 
+### Tasks and Labels
+
+- The session alternates free-speech **Water** blocks (W0–W5) with **Rebus** blocks (R0–R4). A Rebus block is a reading-span task: the participant reads 2 / 3 / 4 / 5 / 7 passages (R0–R4) aloud and, after the block, recalls the final word of every passage. While item *k* of a block is read, *k* final words are held in memory.
+- `cognitive_load` is derived from the item index within the block: items 0–1 → `low`, 2–3 → `medium`, 4–6 → `high` (so `high` occurs only in R3 and R4). R0 (learning phase) is excluded from the lists.
+- `subjective_load` (metadata `speech-segments.csv`, `semantic-segments.csv`): one self-rating per block, collected on paper after each Water and Rebus block. Question: *"How mentally demanding was the previous task?"*, 1 = not at all, 9 = extremely.
+- `rebus_score`: the share of the block's final words recalled after the block (one value per participant and Rebus block).
+
 ### Signals Captured:
 1. Speech signals (close-talk microphones)
 2. ECG+Heart rate and variability
