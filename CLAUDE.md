@@ -31,8 +31,10 @@ All three share the same architecture but differ in their target labels:
 
 ### Configuration System
 
-Each dataset class generates 10 configurations (BUILDER_CONFIGS) as combinations of:
-- **target_type**: `cognitive-load` or `physical-load`
+Each dataset class generates its configurations (BUILDER_CONFIGS) as combinations of:
+- **target_type**: `cognitive-load` (v1.0 lists, label = item index within the block), `cognitive-load-block` and
+  `cognitive-load-item` (v1.1 lists: one item-disjoint split, label = block group / item-index group; see
+  `utils/create_lists_v7.py`), or `physical-load`
 - **subset**: `audio` (only audio subset available in v1.0.0)
 - **split_variant**: `a`, `b`, `c`, `d`, `e` (jackknifing variants)
 

@@ -19,7 +19,7 @@ class BESSTDatasetConfig(datasets.BuilderConfig):
                  speaker_normalization=True, **kwargs):
         """
         Args:
-            target_type (str): The target type ('cognitive-load' or 'physical-load').
+            target_type (str): The target type ('cognitive-load', 'cognitive-load-block', 'cognitive-load-item' or 'physical-load').
             subset (str): The subset ('audio', 'audio-video', etc.).
             split_variant (str): The jackknifing split variant ('a', 'b', 'c', 'd', 'e').
             metadata_dir (str): Directory with `lists/` and `stats/` (the package's `dataset/metadata`).
@@ -108,7 +108,7 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
             description=f"{target_type} dataset with {subset} modalities and split variant {split}.",
             version=datasets.Version("1.0.2"),
         )
-        for target_type in ["cognitive-load", "physical-load"]
+        for target_type in ["cognitive-load", "cognitive-load-block", "cognitive-load-item", "physical-load"]
         for subset in ["audio", "audio-video", "audio-video-bio", "audio-video-ecg"]
         for split in ["a", "b", "c", "d", "e"]
     ]

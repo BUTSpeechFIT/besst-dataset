@@ -115,7 +115,30 @@ The package provides three dataset classes for different classification tasks:
 
 All variants support the same parameters (`target_fs`, `speaker_normalization`) and provide identical audio processing.
 
+#### Cognitive-load list variants (`target_type`)
+
+| `target_type` | since | label of a Rebus segment | items per class (corpus / shared test) |
+|---|---|---|---|
+| `cognitive-load` | v1.0 | item index *k* within the block: *k* 0–1 `low`, 2–3 `medium`, 4–6 `high` | 8 / 7 / 4 (test 2 / 2 / 2, 452 segments) |
+| `cognitive-load-block` | v1.1 | block: R1+R2 `low`, R3 `medium`, R4 `high` (3+4 / 5 / 7 passages per block) | 7 / 5 / 7 (test 2 / 2 / 3, 546 segments) |
+| `cognitive-load-item` | v1.1 | item index *k*: *k* 0 `low`, 1–2 `medium`, 3–6 `high` | 4 / 8 / 7 (test 2 / 2 / 3, 546 segments) |
+
+The two v1.1 variants are one item-disjoint split (same 71 participants and 1448 segments as v1.0, same shared test items
+R2_0 R2_3 R3_1 R3_4 R4_0 R4_1 R4_5, same train+validation pool per fold) with two labels; only the validation items differ,
+because the label decides what a validation item is. They exist because v1.0 trains `high` on a single sentence per fold
+(only four items carry *k* ≥ 4 and two of them are the test set) and because the v1.0 test sentences differ in length by
+class (8–9 s `low`, 12–14 s `high`); the v1.1 test items have class mean durations within 1 s of each other under both
+labels. `utils/create_lists_v7.py` documents the design and regenerates the lists; `tests/test_lists_v2.py` checks them.
+The speaker stats of the v1.1 variants are copied from the v1.0 fold of the same letter (release candidate; re-estimate
+with `utils/estimate_speaker_stats.py` before a final release).
+
 ### Version History
+
+**v1.1.0-rc1** (2026-11-17)
+- New list variants `cognitive-load-block` and `cognitive-load-item` (one item-disjoint split, two labels; see Dataset
+  Variants). The v1.0 `cognitive-load` lists are unchanged. All three builders accept the new `target_type` names.
+- Speaker stats of the new variants are copies of the v1.0 fold stats (per-speaker raw-audio mean/std; they differ by a
+  few percent between folds); to be re-estimated for the final v1.1.0.
 
 **v1.0.3** (2026-11-15)
 - **Fix**: the speaker-ID builder (`speaker_dataset.py`) skipped the first row of every split list (`skiprows=1` on header-less
