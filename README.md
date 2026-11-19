@@ -117,6 +117,14 @@ All variants support the same parameters (`target_fs`, `speaker_normalization`) 
 
 ### Version History
 
+**v1.0.4** (2026-11-19)
+- **Fix**: audio reached the model clipped at ±1. The builders yielded each segment as an array into `datasets.Audio`,
+  which stores arrays as 16-bit PCM WAV; with `speaker_normalization=True` (the default) a segment has unit variance and
+  peaks around 8, so 14.4% of all samples were cut to ±1 (0.3–36% per segment; measured on the v1.0 test list). The
+  builders now write each segment as 32-bit float WAV bytes, which `datasets` stores unchanged and decodes exactly.
+  Raw audio (`speaker_normalization=False`) was within ±1 and is only no longer quantised to 16 bit. All three builders.
+  Results obtained with speaker-normalised audio from earlier versions were trained on clipped input.
+
 **v1.0.3** (2026-11-15)
 - **Fix**: the speaker-ID builder (`speaker_dataset.py`) skipped the first row of every split list (`skiprows=1` on header-less
   `.scp` files), so fold a lost `7_16` (train), `7_15` (validation) and `7_22` (test): 774 / 220 / 451 instead of 775 / 221 / 452.
