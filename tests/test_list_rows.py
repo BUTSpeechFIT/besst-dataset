@@ -10,7 +10,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import io
+
 import datasets
+import librosa
 import numpy as np
 import soundfile as sf
 
@@ -79,8 +82,27 @@ class ListRowsTest(unittest.TestCase):
         self.assertEqual(first["speaker"]["target"], "7")
         self.assertEqual(first["gender"]["target"], "M")
         n = int((1300 - 100) / 1000 * 16000)
-        self.assertEqual(len(first["speaker"]["audio"]["array"]), n)
-        self.assertEqual(first["speaker"]["audio"]["sampling_rate"], 16000)
+        audio, sr = sf.read(io.BytesIO(first["speaker"]["audio"]["bytes"]))
+        self.assertEqual(len(audio), n)
+        self.assertEqual(sr, 16000)
+
+    def test_speaker_normalised_audio_is_not_clipped(self):
+        """v1.0.3 and earlier stored arrays as 16-bit PCM, so unit-variance audio was cut at +-1 (v1.0.4 fix).
+        Through the full datasets path (encode, Arrow cache, decode) the stored audio must equal the builder's floats."""
+        stats = json.loads((self.meta / "stats" / CONFIG).read_text())
+        for target in SCRIPTS:
+            with self.subTest(target=target):
+                ds = datasets.load_dataset(SCRIPTS[target], name=CONFIG, data_dir=str(self.raw), metadata_dir=str(self.meta),
+                                           cache_dir=str(self.tmp / f"hf-{target}"), trust_remote_code=True, target_fs=16000,
+                                           speaker_normalization=True)
+                ex = ds["train"][0]
+                arr = np.asarray(ex["audio"]["array"])
+                self.assertGreater(np.abs(arr).max(), 1.5, "speaker-normalised audio still clipped at 1")
+                # equal to the z-scored, resampled source window
+                raw, sr = sf.read(self.raw / "audio" / "7" / "close_talk.wav", dtype="float64")
+                seg = raw[int(100 * sr / 1000): int(100 * sr / 1000) + int(1200 * sr / 1000)]
+                ref = librosa.resample((seg - stats["7"][0]) / stats["7"][1], orig_sr=sr, target_sr=16000)
+                np.testing.assert_allclose(arr, ref, atol=1e-4)
 
 
 if __name__ == "__main__":

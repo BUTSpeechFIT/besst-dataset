@@ -134,11 +134,22 @@ with `utils/estimate_speaker_stats.py` before a final release).
 
 ### Version History
 
+**v1.1.0-rc2** (2026-11-19)
+- The v1.0.4 fix (no clipping at ±1) on top of v1.1.0-rc1; lists unchanged.
+
 **v1.1.0-rc1** (2026-11-17)
 - New list variants `cognitive-load-block` and `cognitive-load-item` (one item-disjoint split, two labels; see Dataset
   Variants). The v1.0 `cognitive-load` lists are unchanged. All three builders accept the new `target_type` names.
 - Speaker stats of the new variants are copies of the v1.0 fold stats (per-speaker raw-audio mean/std; they differ by a
   few percent between folds); to be re-estimated for the final v1.1.0.
+
+**v1.0.4** (2026-11-19)
+- **Fix**: audio reached the model clipped at ±1. The builders yielded each segment as an array into `datasets.Audio`,
+  which stores arrays as 16-bit PCM WAV; with `speaker_normalization=True` (the default) a segment has unit variance and
+  peaks around 8, so 14.4% of all samples were cut to ±1 (0.3–36% per segment; measured on the v1.0 test list). The
+  builders now write each segment as 32-bit float WAV bytes, which `datasets` stores unchanged and decodes exactly.
+  Raw audio (`speaker_normalization=False`) was within ±1 and is only no longer quantised to 16 bit. All three builders.
+  Results obtained with speaker-normalised audio from earlier versions were trained on clipped input.
 
 **v1.0.3** (2026-11-15)
 - **Fix**: the speaker-ID builder (`speaker_dataset.py`) skipped the first row of every split list (`skiprows=1` on header-less

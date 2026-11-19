@@ -9,6 +9,16 @@ import librosa
 import numpy as np
 import soundfile as sf
 
+
+def float_wav_bytes(segment, sampling_rate):
+    """The segment as 32-bit float WAV bytes. `datasets.Audio` stores an array as 16-bit PCM (soundfile's WAV default),
+    which clips every sample beyond +-1: speaker-normalised audio (unit variance, peaks ~8) lost 14% of its samples
+    that way up to v1.0.3. Bytes are stored as given and decode back to the exact float values."""
+    import io
+    buf = io.BytesIO()
+    sf.write(buf, np.asarray(segment, dtype=np.float32), sampling_rate, format="WAV", subtype="FLOAT")
+    return buf.getvalue()
+
 load2label = {"1": "low", "2": "medium", "3": "high"}
 logging.basicConfig(level=logging.INFO)
 
@@ -243,10 +253,7 @@ class BESSTDataset(datasets.GeneratorBasedBuilder):
 
             yield f"{pid}_{segid}", {
                 "id": f"{pid}_{segid}",
-                "audio": {
-                    "array": segment,
-                    "sampling_rate": self.target_fs,
-                },
+                "audio": {"bytes": float_wav_bytes(segment, self.target_fs), "path": None},
                 "start": start,
                 "end": end,
                 "pid": int(pid),
